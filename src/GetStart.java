@@ -10,7 +10,7 @@ public class GetStart {
             frame.setSize(400, 700);
             frame.setResizable(false);
 
-            WeatherPanel panel = new WeatherPanel();
+            WeatherPanel panel = new WeatherPanel(frame); // Pass frame reference
             frame.add(panel);
 
             frame.setVisible(true);
@@ -18,6 +18,7 @@ public class GetStart {
     }
 
     static class WeatherPanel extends JPanel {
+        private final JFrame parentFrame;
 
         @Override
         protected void paintComponent(Graphics g) {
@@ -30,7 +31,8 @@ public class GetStart {
             g2d.fillRect(0, 0, getWidth(), getHeight());
         }
 
-        public WeatherPanel() {
+        public WeatherPanel(JFrame frame) {
+            this.parentFrame = frame;
             setLayout(null);
 
             // Weather Icon (Placeholder)
@@ -59,6 +61,15 @@ public class GetStart {
             startButton.setBackground(new Color(255, 204, 0));
             startButton.setForeground(Color.BLACK);
             startButton.setFocusPainted(false);
+            startButton.addActionListener(e -> {
+                // Create and show SignIn window
+                SwingUtilities.invokeLater(() -> {
+                    SignIn signIn = new SignIn();
+                    signIn.setVisible(true);
+                    // Dispose current window
+                    parentFrame.dispose();
+                });
+            });
             add(startButton);
         }
     }

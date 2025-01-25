@@ -23,6 +23,12 @@ public class WeatherApp extends JFrame {
     private JLabel errorLabel;
     private JPanel weatherPanel;
     private JPanel forecastPanel;
+    private ImageIcon cloudnessIcon;
+    private ImageIcon feelsLikeIcon;
+    private ImageIcon humidityIcon;
+    private ImageIcon pressureIcon;
+    private ImageIcon sunriseSunsetIcon;
+    private ImageIcon windSpeedIcon;
 
     public WeatherApp() {
         super("Weather App");
@@ -30,25 +36,86 @@ public class WeatherApp extends JFrame {
         setSize(800, 600);
         setLocationRelativeTo(null);
 
-        // Main panel with white background
-        JPanel mainPanel = new JPanel();
-        mainPanel.setBackground(Color.WHITE);
+        // Load weather icons
+        cloudnessIcon = new ImageIcon("/Users/sanju/Downloads/Weather-app-main/src/Cloudness.jpeg");
+        feelsLikeIcon = new ImageIcon("/Users/sanju/Downloads/Weather-app-main/src/FeelsLike.jpeg");
+        humidityIcon = new ImageIcon("/Users/sanju/Downloads/Weather-app-main/src/Humidity.jpeg");
+        pressureIcon = new ImageIcon("/Users/sanju/Downloads/Weather-app-main/src/Pressure.png");
+        sunriseSunsetIcon = new ImageIcon("/Users/sanju/Downloads/Weather-app-main/src/SuniriseSunset.png");
+        windSpeedIcon = new ImageIcon("/Users/sanju/Downloads/Weather-app-main/src/WindSpeed.jpeg");
+
+        // Resize icons to appropriate size
+        int iconSize = 30;
+        cloudnessIcon = new ImageIcon(cloudnessIcon.getImage().getScaledInstance(iconSize, iconSize, Image.SCALE_SMOOTH));
+        feelsLikeIcon = new ImageIcon(feelsLikeIcon.getImage().getScaledInstance(iconSize, iconSize, Image.SCALE_SMOOTH));
+        humidityIcon = new ImageIcon(humidityIcon.getImage().getScaledInstance(iconSize, iconSize, Image.SCALE_SMOOTH));
+        pressureIcon = new ImageIcon(pressureIcon.getImage().getScaledInstance(iconSize, iconSize, Image.SCALE_SMOOTH));
+        sunriseSunsetIcon = new ImageIcon(sunriseSunsetIcon.getImage().getScaledInstance(iconSize, iconSize, Image.SCALE_SMOOTH));
+        windSpeedIcon = new ImageIcon(windSpeedIcon.getImage().getScaledInstance(iconSize, iconSize, Image.SCALE_SMOOTH));
+
+        // Main panel with gradient background
+        JPanel mainPanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g;
+                GradientPaint gradient =  new GradientPaint(0, 0, new Color(111, 78, 198), 0, getHeight(), new Color(111, 56, 204));
+                g2d.setPaint(gradient);
+                g2d.fillRect(0, 0, getWidth(), getHeight());
+            }
+        };
         mainPanel.setLayout(new BorderLayout());
 
-        // Title label
-        JLabel titleLabel = new JLabel("Weather App", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        // Title label with enhanced styling
+        JLabel titleLabel = new JLabel("Weather Forecast", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 32));
+        titleLabel.setForeground(Color.WHITE);
+        titleLabel.setBorder(new EmptyBorder(20, 0, 20, 0));
         mainPanel.add(titleLabel, BorderLayout.NORTH);
 
-        // Input panel
-        JPanel inputPanel = new JPanel(new FlowLayout());
+        // Enhanced input panel
+        JPanel inputPanel = new JPanel();
+        inputPanel.setOpaque(false);
+        inputPanel.setBorder(new EmptyBorder(0, 20, 20, 20));
+        inputPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 10));
+
+        // Styled search textfield
         cityTextField = new JTextField(20);
-        cityTextField.setFont(new Font("Arial", Font.PLAIN, 16));
-        JButton searchButton = new JButton("Search");
-        searchButton.setFont(new Font("Arial", Font.BOLD, 14));
-        searchButton.setBackground(new Color(30, 144, 255));
-        searchButton.setForeground(Color.WHITE);
+        cityTextField.setFont(new Font("Arial", Font.PLAIN, 18));
+        cityTextField.setPreferredSize(new Dimension(300, 40));
+        cityTextField.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(255, 255, 255, 100), 2, true),
+            BorderFactory.createEmptyBorder(5, 10, 5, 10)
+        ));
+        cityTextField.setBackground(new Color(255, 255, 255, 50));
+        cityTextField.setForeground(Color.WHITE);
+        cityTextField.setCaretColor(Color.WHITE);
+
+        // Styled search button
+        JButton searchButton = new JButton("Search Weather");
+        searchButton.setFont(new Font("Arial", Font.BOLD, 16));
+        searchButton.setPreferredSize(new Dimension(150, 40));
+        searchButton.setBackground(new Color(255, 204, 0));
+        searchButton.setForeground(Color.BLACK);
+        searchButton.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createRaisedBevelBorder(),
+            BorderFactory.createEmptyBorder(5, 15, 5, 15)
+        ));
+        searchButton.setFocusPainted(false);
+        searchButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        
+        // Button hover effect
+        searchButton.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) {
+                searchButton.setBackground(new Color(255, 215, 50));
+            }
+            public void mouseExited(MouseEvent e) {
+                searchButton.setBackground(new Color(255, 204, 0));
+            }
+        });
+        
         searchButton.addActionListener(e -> fetchWeatherData());
+        
         inputPanel.add(cityTextField);
         inputPanel.add(searchButton);
         mainPanel.add(inputPanel, BorderLayout.NORTH);
@@ -57,25 +124,29 @@ public class WeatherApp extends JFrame {
         weatherPanel = new JPanel();
         weatherPanel.setLayout(new BoxLayout(weatherPanel, BoxLayout.Y_AXIS));
         weatherPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
+        weatherPanel.setOpaque(false);
         mainPanel.add(weatherPanel, BorderLayout.CENTER);
 
         // Weather labels
         weatherLabel = new JLabel("", SwingConstants.CENTER);
         weatherLabel.setFont(new Font("Arial", Font.PLAIN, 20));
+        weatherLabel.setForeground(Color.WHITE);
         weatherPanel.add(weatherLabel);
 
         loadingLabel = new JLabel("Loading...", SwingConstants.CENTER);
+        loadingLabel.setForeground(Color.WHITE);
         loadingLabel.setVisible(false);
         weatherPanel.add(loadingLabel);
 
         errorLabel = new JLabel("", SwingConstants.CENTER);
-        errorLabel.setForeground(Color.RED);
+        errorLabel.setForeground(new Color(255, 100, 100));
         errorLabel.setVisible(false);
         weatherPanel.add(errorLabel);
 
         // 5-day forecast panel
         forecastPanel = new JPanel(new GridLayout(1, 5, 10, 10));
         forecastPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
+        forecastPanel.setOpaque(false);
         mainPanel.add(forecastPanel, BorderLayout.SOUTH);
 
         add(mainPanel);
@@ -172,14 +243,14 @@ public class WeatherApp extends JFrame {
                         "<br>" +
                         "<table width='100%'>" +
                         "<tr>" +
-                        "<td align='center'><img src='thermometer.png' width='20' height='20'><br>Feels like<br>" + Math.round(feelsLike) + "°C</td>" +
-                        "<td align='center'><img src='humidity.png' width='20' height='20'><br>Humidity<br>" + humidity + "%</td>" +
-                        "<td align='center'><img src='wind.png' width='20' height='20'><br>Wind Speed<br>" + Math.round(windSpeed) + " km/h</td>" +
+                        "<td align='center'><img src='" + feelsLikeIcon.toString() + "'><br>Feels like<br>" + Math.round(feelsLike) + "°C</td>" +
+                        "<td align='center'><img src='" + humidityIcon.toString() + "'><br>Humidity<br>" + humidity + "%</td>" +
+                        "<td align='center'><img src='" + windSpeedIcon.toString() + "'><br>Wind Speed<br>" + Math.round(windSpeed) + " km/h</td>" +
                         "</tr>" +
                         "<tr>" +
-                        "<td align='center'><img src='pressure.png' width='20' height='20'><br>Pressure<br>" + pressure + " hPa</td>" +
-                        "<td align='center'><img src='cloudiness.png' width='20' height='20'><br>Cloudiness<br>" + cloudiness + "%</td>" +
-                        "<td align='center'><img src='sunrise.png' width='20' height='20'><br>Sunrise | Sunset<br>" + sunriseFormatted + " | " + sunsetFormatted + "</td>" +
+                        "<td align='center'><img src='" + pressureIcon.toString() + "'><br>Pressure<br>" + pressure + " hPa</td>" +
+                        "<td align='center'><img src='" + cloudnessIcon.toString() + "'><br>Cloudiness<br>" + cloudiness + "%</td>" +
+                        "<td align='center'><img src='" + sunriseSunsetIcon.toString() + "'><br>Sunrise | Sunset<br>" + sunriseFormatted + " | " + sunsetFormatted + "</td>" +
                         "</tr>" +
                         "</table>" +
                         "<br>" +
@@ -245,23 +316,16 @@ public class WeatherApp extends JFrame {
             String dayOfWeek = calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, java.util.Locale.US);
             JLabel dayLabel = new JLabel(dayOfWeek, SwingConstants.CENTER);
 
-            // Use try-catch to handle potential MalformedURLException
-            try {
-                JLabel iconLabel = new JLabel(new ImageIcon(new URL("http://openweathermap.org/img/wn/" + icon + "@2x.png")));
-                JLabel tempLabel = new JLabel(Math.round(maxTemp) + "°C", SwingConstants.CENTER);
-                tempLabel.setFont(new Font("Arial", Font.BOLD, 16));
-                JLabel minMaxLabel = new JLabel("<html><font color='red'>" + Math.round(minTemp) + "°C</font> | <font color='blue'>" + Math.round(maxTemp) + "°C</font></html>", SwingConstants.CENTER);
-                JLabel descLabel = new JLabel(description, SwingConstants.CENTER);
+            JLabel tempLabel = new JLabel(Math.round(maxTemp) + "°C", SwingConstants.CENTER);
+            tempLabel.setFont(new Font("Arial", Font.BOLD, 16));
+            JLabel minMaxLabel = new JLabel("<html><font color='red'>" + Math.round(minTemp) + "°C</font> | <font color='blue'>" + Math.round(maxTemp) + "°C</font></html>", SwingConstants.CENTER);
+            JLabel descLabel = new JLabel(description, SwingConstants.CENTER);
 
-                dayPanel.add(dayLabel);
-                dayPanel.add(iconLabel);
-                dayPanel.add(tempLabel);
-                dayPanel.add(minMaxLabel);
-                dayPanel.add(descLabel);
-            } catch (MalformedURLException e) {
-                // Handle the exception, e.g., print an error message or show a default icon
-                System.err.println("Error creating icon: " + e.getMessage());
-            }
+            dayPanel.add(dayLabel);
+            dayPanel.add(tempLabel);
+            dayPanel.add(minMaxLabel);
+            dayPanel.add(descLabel);
+            
             forecastPanel.add(dayPanel);
         }
     }

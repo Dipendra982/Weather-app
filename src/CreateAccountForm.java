@@ -1,9 +1,7 @@
-
-
-
 import java.awt.*;
 import java.awt.geom.*;
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 
 public class CreateAccountForm extends JFrame {
     private JTextField nameField;
@@ -62,6 +60,56 @@ public class CreateAccountForm extends JFrame {
         // Create buttons
         signInButton = createStyledButton("Sign in", 40, 380);
         signUpButton = createStyledButton("Sign up", 160, 380);
+        
+        // Add sign in button action listener
+        signInButton.addActionListener(e -> {
+            dispose();
+            SwingUtilities.invokeLater(() -> new SignIn().setVisible(true));
+        });
+        
+        // Add sign up button action listener
+        signUpButton.addActionListener(e -> {
+            // Validate all fields are filled
+            if(nameField.getText().trim().isEmpty() || 
+               emailField.getText().trim().isEmpty() || 
+               new String(passwordField.getPassword()).trim().isEmpty()) {
+                JOptionPane.showMessageDialog(this, 
+                    "All fields are required!", 
+                    "Validation Error", 
+                    JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            // Validate email format
+            String email = emailField.getText().trim();
+            if(!email.endsWith("@gmail.com")) {
+                emailField.setBorder(new LineBorder(Color.RED));
+                JOptionPane.showMessageDialog(this, 
+                    "Email must end with @gmail.com", 
+                    "Invalid Email", 
+                    JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            // Validate password length
+            String password = new String(passwordField.getPassword());
+            if(password.length() < 4) {
+                passwordField.setBorder(new LineBorder(Color.RED));
+                JOptionPane.showMessageDialog(this, 
+                    "Password must be at least 4 characters long", 
+                    "Invalid Password", 
+                    JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            // If all validations pass, show success message and redirect to SignIn
+            JOptionPane.showMessageDialog(this,
+                "Account created successfully!",
+                "Success",
+                JOptionPane.INFORMATION_MESSAGE);
+            dispose();
+            SwingUtilities.invokeLater(() -> new SignIn().setVisible(true));
+        });
         
         // Add components to panel
         mainPanel.add(titleLabel);

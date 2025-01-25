@@ -3,7 +3,7 @@ import java.awt.geom.*;
 import javax.swing.*;
 
 public class SignIn extends JFrame {
-    private JTextField nameField;
+    private JTextField emailField;
     private JPasswordField passwordField;
     private JButton signInButton;
     private JButton signUpButton;
@@ -47,21 +47,47 @@ public class SignIn extends JFrame {
         mainPanel.add(titleLabel);
 
         // Create labels
-        JLabel nameLabel = createStyledLabel("Name", 40, 180);
+        JLabel emailLabel = createStyledLabel("Email", 40, 180);
         JLabel passwordLabel = createStyledLabel("Password", 40, 240);
 
         // Create form fields
-        nameField = createStyledTextField(40, 200);
+        emailField = createStyledTextField(40, 200);
         passwordField = createStyledPasswordField(40, 260);
 
         // Create buttons
         signInButton = createStyledButton("Sign in", 40, 350);
         signUpButton = createStyledButton("Sign up", 160, 350);
 
+        // Add sign in button action listener
+        signInButton.addActionListener(e -> {
+            String email = emailField.getText().trim();
+            String password = new String(passwordField.getPassword()).trim();
+
+            if (email.isEmpty() || password.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please fill in all fields", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            if (email.equals("demo@gmail.com") && password.equals("Test")) {
+                dispose();
+                SwingUtilities.invokeLater(() -> new WeatherApp());
+            } else {
+                JOptionPane.showMessageDialog(this, "Invalid credentials", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        // Add sign up button action listener
+        signUpButton.addActionListener(e -> {
+            SwingUtilities.invokeLater(() -> {
+                new CreateAccountForm();
+                dispose(); // Close current window
+            });
+        });
+
         // Add components to panel
-        mainPanel.add(nameLabel);
+        mainPanel.add(emailLabel);
         mainPanel.add(passwordLabel);
-        mainPanel.add(nameField);
+        mainPanel.add(emailField);
         mainPanel.add(passwordField);
         mainPanel.add(signInButton);
         mainPanel.add(signUpButton);
