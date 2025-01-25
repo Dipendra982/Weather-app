@@ -48,7 +48,7 @@ public class CreateAccountForm extends JFrame {
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         titleLabel.setForeground(new Color(63, 57, 125));
         
-        // Create labels
+        // Create labels second Commit by rahul
         JLabel nameLabel = createStyledLabel("Name", 40, 180);
         JLabel emailLabel = createStyledLabel("Email", 40, 240);
         JLabel passwordLabel = createStyledLabel("Password", 40, 300);
