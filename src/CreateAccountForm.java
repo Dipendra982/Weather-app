@@ -3,6 +3,7 @@ import java.awt.geom.*;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 
+// public class of creating account created by rahul
 public class CreateAccountForm extends JFrame {
     private JTextField nameField;
     private JTextField emailField;
