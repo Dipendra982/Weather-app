@@ -8,3 +8,9 @@ The Weather App is a Java-based application that provides real-time weather upda
 Technologies Used
 
 Java (Core functionality and GUI using Swing)
+
+Installation and Setup
+
+Clone the repository:
+
+git clone https://github.com/Dipendra982/Weather-app.git
