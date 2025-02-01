@@ -14,3 +14,7 @@ Installation and Setup
 Clone the repository:
 
 git clone https://github.com/Dipendra982/Weather-app.git
+
+Open the project in an IDE (such as IntelliJ IDEA, Eclipse, or NetBeans).
+
+Ensure that you have Java installed (JDK 8 or later is recommended).
