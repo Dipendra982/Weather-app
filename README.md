@@ -18,3 +18,10 @@ git clone https://github.com/Dipendra982/Weather-app.git
 Open the project in an IDE (such as IntelliJ IDEA, Eclipse, or NetBeans).
 
 Ensure that you have Java installed (JDK 8 or later is recommended).
+
+Install dependencies (if applicable).
+
+Run the application using:
+
+javac WeatherApp.java
+java WeatherApp
