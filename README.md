@@ -25,3 +25,12 @@ Run the application using:
 
 javac WeatherApp.java
 java WeatherApp
+
+Contributors
+
+@Heemal99(Himal Koirala)
+@Dipendra982(Dipendra Shrestha)
+@devrahul7(Rahul )
+Binisha 
+Sunam
+Komal
